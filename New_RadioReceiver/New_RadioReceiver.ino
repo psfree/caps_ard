@@ -1,27 +1,20 @@
-#define PanPin 3
-#define TiltPin 9
-#define Steps 180
-
-
-// Sets Our Variables
-//int PosTilt = 0;
-//int PosPan = 0;
-int long val = 0;
-int oldPan = 0;
-int oldTilt = 0;
-unsigned int y;
-
-
 #include <Servo.h>
-// Servo Setup
-Servo PanServo;
-Servo TiltServo; 
-
-
 #include <SPI.h>
 #include <nRF24L01.h>
 #include <RF24.h>
 
+#define PAN_PIN 3
+#define TILT_PIN 9
+#define STEPS 180
+#define MAX_DELAY 85
+
+// Sets Our Variables
+unsigned long delayPanTime = 0;
+unsigned long delayTiltTime = 0;
+
+// Servo Setup
+Servo PanServo;
+Servo TiltServo;
 
 //RF24 initiialise
 RF24 radio(7, 8); // CE, CSN
@@ -38,8 +31,8 @@ void setup() {
   Serial.begin(9600);
 
   //Servo Setup
-  PanServo.attach(PanPin);
-  TiltServo.attach(TiltPin);
+  PanServo.attach(PAN_PIN);
+  TiltServo.attach(TILT_PIN);
 
   //Initialises Radio Stuff
   radio.begin();
@@ -47,89 +40,51 @@ void setup() {
   radio.setPALevel(RF24_PA_MAX);
   radio.startListening(); // sets this as a receiver
 
-
-//  while (!Serial) {}
 }
 
-
 void loop() {
-
-  //GetPos();
-  
-    if (radio.available()) {
-
+  if (radio.available()) {
+    //Read the positions from the radio
     radio.read(&pos, sizeof(pos));
     posPan = pos[1];
     posTilt = pos[0];
-    Serial.print(posPan);
-    Serial.print(",");
-    Serial.println(posTilt);
 
-    posPan = map (posPan, 0, 1023, 0, Steps);
-    posTilt = map (posTilt, 0, 1023, 0, Steps);
-    
-    if (posPan > 100 && curPosPan < 180){
-      curPosPan += 1;
-    }
-    if (posPan < 80 && curPosPan > 0){
-      curPosPan -= 1;
-    }
-    if (posPan > 85 && posPan < 95){
-      
-    }
-    else{
+    //Debug logging recieved values
+    Serial.print(curPosPan);
+    Serial.print(",");
+    Serial.println(curPosTilt);
+
+    //
+    unsigned long curTime  = millis();
+    if ((curTime > delayPanTime) ) {
+      if (posPan > 545 && curPosPan < 180) {
+        delayPanTime = map (posPan, 545, 1023, MAX_DELAY, 1) + millis();
+        curPosPan++;
+      }
+      else if (posPan < 500 && curPosPan > 0) {
+        delayPanTime = map (posPan, 0, 500, 1, MAX_DELAY);
+        curPosPan--;
+      }
+      else {
+        delayPanTime = 0;
+      }
       PanServo.write(curPosPan);
     }
 
-    if (posTilt > 100 && curPosTilt < 180){
-      curPosTilt += 1;
-    }
-    if (posTilt < 80 && curPosTilt > 0){
-      curPosTilt -= 1;
-    }
-    if (posTilt > 85 && posTilt < 95){
-      
-    }
-    else{
+    if ( (curTime > delayTiltTime)) {
+      if (posTilt > 545 && curPosTilt < 180) {
+        delayTiltTime = map (posTilt, 545, 1023, MAX_DELAY, 1) + millis();
+        curPosTilt += 1;
+      }
+      else if (posTilt < 500 && curPosTilt > 0) {
+        delayTiltTime = map (posTilt, 0, 500, 1, MAX_DELAY) + millis();
+        curPosTilt -= 1;
+      }
+      else {
+        delayTiltTime = 0;
+      }
       TiltServo.write(curPosTilt);
     }
- 
-   }
-     else Serial.println("Fail");
- }
-
-
-void GetPos() {
-  if (radio.available()) {
-
-    radio.read(&pos, sizeof(pos));
-    posPan = pos[0];
-    posTilt = pos[1];
-    Serial.print(posPan);
-    Serial.print(",");
-    Serial.println(posTilt);
-
-    posPan = map (posPan, 0, 1023, 0, Steps);
-    
-    //&& curPosPan < 180
-    if (posPan > 90 ){
-      curPosPan += 5;
-    }
-    
-    //&& curPosPan > 0
-    if (posPan < 90 ){
-      curPosPan -= 5;
-    }
-
-    //if (posPan == 90){
-      
-    //}
-    //else{
-      PanServo.write(posPan);
-    //}
-    
 
   }
-  else Serial.println("Fail");
-
 }
