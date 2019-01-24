@@ -6,7 +6,7 @@
 #define PAN_PIN 3
 #define TILT_PIN 9
 #define STEPS 180
-#define MAX_DELAY 85
+#define MAX_DELAY 50
 
 // Sets Our Variables
 unsigned long delayPanTime = 0;
@@ -50,9 +50,9 @@ void loop() {
     posTilt = pos[0];
 
     //Debug logging recieved values
-    Serial.print(curPosPan);
-    Serial.print(",");
-    Serial.println(curPosTilt);
+//    Serial.print(curPosPan);
+//    Serial.print(",");
+//    Serial.println(curPosTilt);
 
     //
     unsigned long curTime  = millis();
