@@ -51,7 +51,7 @@ void setup() {
   //Initialises Radio Stuff
   radio.begin();
   radio.openReadingPipe(0, address);
-  radio.setPALevel(RF24_PA_MAX);
+  radio.setPALevel(RF24_PA_HIGH); // in ascending order of Power, MIN, LOW, HIGH, MAX
   radio.startListening(); // sets this as a receiver
 
 }
@@ -68,19 +68,19 @@ void loop() {
     posFocus2 = pos[5];
 
     //Debug logging recieved values
-    //    Serial.print("Received Values are:");
-    //    Serial.print(posTilt);
-    //    Serial.print(",");
-    //    Serial.print(posPan);
-    //    Serial.print(",");
-    //    Serial.print(posFocus);
-    //    Serial.print(",");
-    //    Serial.print(posZoom);
-    //    Serial.print(",");
-    //    Serial.print(posFocus2);
-    //    Serial.print(",");
-    //    Serial.println(posZoom2);
-    // Debug Current Pos Values
+//            Serial.print("Received Values are:");
+//            Serial.print(posTilt);
+//            Serial.print(",");
+//            Serial.print(posPan);
+//            Serial.print(",");
+//            Serial.print(posFocus);
+//            Serial.print(",");
+//            Serial.print(posZoom);
+//            Serial.print(",");
+//            Serial.print(posFocus2);
+//            Serial.print(",");
+//            Serial.println(posZoom2);
+//     Debug Current Pos Values
     Serial.print("Current Pos Values are:");
     Serial.print(curPosPan);
     Serial.print(",");
@@ -123,21 +123,25 @@ void loop() {
       TiltServo.write(curPosTilt);
     }
 
-    if (posZoom == 0 && curPosZoom < 120) {
+    if (posZoom == 0 && curPosZoom < 135) {
       curPosZoom++;
     }
-    if (posZoom2 == 0 && curPosZoom > 60) {
+    if (posZoom2 == 0 && curPosZoom > 45) {
       curPosZoom--;
     }
 
-    if (posFocus == 0 && curPosFocus < 120) {
+    if (posFocus == 0 && curPosFocus < 135) {
       curPosFocus++;
     }
-    if (posFocus2 == 0 && curPosFocus > 60) {
+    if (posFocus2 == 0 && curPosFocus > 45) {
       curPosFocus--;
     }
     ZoomServo.write(curPosZoom);
     FocusServo.write(curPosFocus);
 
+  }
+
+  else {
+    Serial.println("Fail");
   }
 }
