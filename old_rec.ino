@@ -3,8 +3,8 @@
 #include <nRF24L01.h>
 #include <RF24.h>
 
-#define PAN_PIN 3
-#define TILT_PIN 4
+#define PAN_PIN 9
+#define TILT_PIN 10
 #define ZOOM_PIN 5
 #define FOCUS_PIN 6
 
@@ -22,7 +22,7 @@ Servo ZoomServo;
 Servo FocusServo;
 
 //RF24 initiialise
-RF24 radio(9, 10); // CE, CSN
+RF24 radio(7, 8); // CE, CSN 9,10 for joystick board
 const byte address[6] = "00001";
 
 // Position Array
@@ -30,13 +30,13 @@ long pos[8];
 long posPan;
 long curPosPan = 100;
 long posTilt;
-long curPosTilt = 60;
+long curPosTilt = 90;
 long posZoom;
 long posZoom2;
-long curPosZoom = 60;
+long curPosZoom = 90;
 long posFocus;
 long posFocus2;
-long curPosFocus = 60;
+long curPosFocus = 90;
 
 
 void setup() {
@@ -68,9 +68,27 @@ void loop() {
     posFocus2 = pos[5];
 
     //Debug logging recieved values
+    //    Serial.print("Received Values are:");
+    //    Serial.print(posTilt);
+    //    Serial.print(",");
+    //    Serial.print(posPan);
+    //    Serial.print(",");
+    //    Serial.print(posFocus);
+    //    Serial.print(",");
+    //    Serial.print(posZoom);
+    //    Serial.print(",");
+    //    Serial.print(posFocus2);
+    //    Serial.print(",");
+    //    Serial.println(posZoom2);
+    // Debug Current Pos Values
+    Serial.print("Current Pos Values are:");
     Serial.print(curPosPan);
     Serial.print(",");
-    Serial.println(curPosTilt);
+    Serial.print(curPosTilt);
+    Serial.print(",");
+    Serial.print(curPosFocus);
+    Serial.print(",");
+    Serial.println(curPosZoom);
 
     unsigned long curTime  = millis();
     if ((curTime > delayPanTime) ) {
@@ -94,7 +112,7 @@ void loop() {
         delayTiltTime = map (posTilt, 534, 1023, MAX_DELAY, 1) + millis();
         curPosTilt += 1;
       }
-      else if (posTilt < 460 && curPosTilt > 0) {
+      else if (posTilt < 460 && curPosTilt > 40) {
         delayTiltTime = map (posTilt, 0, 460, 1, MAX_DELAY) + millis();
         curPosTilt -= 1;
       }
@@ -105,17 +123,17 @@ void loop() {
       TiltServo.write(curPosTilt);
     }
 
-    if (posZoom == 0){
+    if (posZoom == 0 && curPosZoom < 120) {
       curPosZoom++;
     }
-    if (posZoom2 == 0){
+    if (posZoom2 == 0 && curPosZoom > 60) {
       curPosZoom--;
     }
-    
-    if (posFocus == 0){
+
+    if (posFocus == 0 && curPosFocus < 120) {
       curPosFocus++;
     }
-    if (posFocus2 == 0){
+    if (posFocus2 == 0 && curPosFocus > 60) {
       curPosFocus--;
     }
     ZoomServo.write(curPosZoom);

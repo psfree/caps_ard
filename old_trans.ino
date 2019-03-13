@@ -1,13 +1,12 @@
 #include <SPI.h>
 #include <nRF24L01.h>
 #include <RF24.h>
-RF24 radio(9, 10); // CE,CSN
+RF24 radio(9, 10); // CE,CSN on JS Shield 9/10
 const byte address[6] = "00001";
 
-long pos[8];
-
-int x_key = A1;
-int y_key = A0;
+//Joystick Inputs
+int const x_key = A1;
+int const y_key = A0;
 long x_pos;
 long y_pos;
 
@@ -25,6 +24,15 @@ long left_pos;
 long e_pos;
 long f_pos;
 
+boolean pressed_Up = false;
+boolean pressed_Right = false;
+boolean pressed_Down = false;
+boolean pressed_Left = false;
+boolean pressed_E = false;
+boolean pressed_F = false;
+
+long pos[8];
+
 void setup() {
   radio.begin();
   radio.openWritingPipe(address);
@@ -32,9 +40,10 @@ void setup() {
   radio.setPALevel(RF24_PA_MAX); // in ascending order of Power, MIN, LOW, HIGH, MAX
   radio.stopListening(); // sets this as trasmitter
   Serial.begin(9600);
+
   pinMode (x_key, INPUT) ;
   pinMode (y_key, INPUT) ;
-
+  
   pinMode(Up_btn, INPUT);
   digitalWrite(Up_btn, HIGH);
   
@@ -52,12 +61,18 @@ void setup() {
 
   pinMode(F_btn, INPUT);
   digitalWrite(F_btn, HIGH);
-
 }
+/*
+@@@JASON@@@@
 
+Please create a way to send all 8 pieces of information over pos array
+
++ look at https://github.com/psfree/caps_ard for receiver code to do receiving as well
+
+*/
 void loop() {
-  x_pos = analogRead (x_key) ;
-  y_pos = analogRead (y_key) ;
+  x_pos = analogRead (x_key);
+  y_pos = analogRead (y_key);
   up_pos = digitalRead (Up_btn);
   right_pos = digitalRead (Right_btn);
   down_pos = digitalRead (Down_btn);
@@ -82,7 +97,8 @@ void loop() {
   Serial.println(left_pos);
   Serial.println(e_pos);
   Serial.println(f_pos);
-  
+
   radio.write(&pos, sizeof(pos));
   //dio.write(&y_pos, sizeof(y_pos));
- }
+  
+}
