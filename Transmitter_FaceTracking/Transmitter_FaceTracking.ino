@@ -10,12 +10,27 @@ int count = 0;
 char mode = 'n';
 char faceInput = 'c';
 char faceInput2 = 'c';
+float focus;
 int x_key = A5;
 int y_key = A0;
 long x_pos = 512;
 long y_pos;
 long pos[2];
 
+struct serdata { //7 bytes
+  char c1;  //1
+  char c2;  //1
+  float control;  //4
+  char newline; //1
+};
+
+union pcin {
+  serdata ser;
+  byte dl[7];
+};
+
+pcin rcv;
+byte rx_array[7];
 void setup() {
   Serial.begin(9600);
   Serial.println("Input Desired Mode");
@@ -53,44 +68,46 @@ void loop() {
   //    //radio.write(&y_pos, sizeof(y_pos));
   //  }
   char c;
-  if (Serial.available() > 0) {
-    c = Serial.read();
-    input[count] = c;
-    count++;
+  if (Serial.available() < 7) {
+     // error
+     return;
   }
-  if (c == '\n') {
-    faceInput = input[1];
-    faceInput2 = input[0];
-    if(!isValid(faceInput)) return;
-    if(!isValid(faceInput2)) return;
-    count = 0;
-    c = ' ';
-    //Serial.println(input);
-    input[0] = input[1] = input[2] = 0;
 
-    if (faceInput == 'r') {
-      x_pos = 950;
-    }
-    else if (faceInput == 'l') {
-      x_pos = 20;
-    }
-    else {
-      x_pos = 512;
-    }
-    
-
-    if (faceInput2 == 'u') {
-      y_pos = 950;
-    }
-    else if (faceInput2 == 'd') {
-      y_pos = 20;
-    }
-    else {
-      y_pos=512;
-    }
-    pos[1] = x_pos;
-    pos[0] = y_pos;
-    Serial.println(x_pos);
-    radio.write(&pos, sizeof(pos));
+  for(byte i=0; i<7; i++) {
+    rx_array[i] = Serial.read();
   }
+  
+  for (byte i = 0; i < 7; i++) {
+     pcin.dl[i] = rx_array[i];
+  }
+  face_y = pcin.ser.c1;
+  face_x = pcin.ser.c2;
+  focus = pcin.ser.control;
+  
+  if(!isValid(face_x)) return;
+  if(!isValid(face_y)) return;
+
+  if(face_x == 'r') {
+    x_pos = 950;
+  }
+  else if(face_x == 'l') {
+    x_pos = 20;
+  }
+  else {
+    x_pos = 512;
+  }
+
+  if(face_y =='u') {
+    y_pos=950;
+  }
+  else if(face_y == 'd') {
+    y_pos=20;
+  }
+  else {
+    y_pos=512;
+  }
+  pos[1] = x_pos;
+  pos[0] = y_pos;
+  Serial.println(x_pos);
+  radio.write(&pos. sizeof(pos));
 }
