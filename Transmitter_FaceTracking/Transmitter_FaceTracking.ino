@@ -78,11 +78,11 @@ void loop() {
   }
   
   for (byte i = 0; i < 7; i++) {
-     pcin.dl[i] = rx_array[i];
+     rcv.dl[i] = rx_array[i];
   }
-  face_y = pcin.ser.c1;
-  face_x = pcin.ser.c2;
-  focus = pcin.ser.control;
+  int face_y = rcv.ser.c1;
+  int face_x = rcv.ser.c2;
+  float focus = rcv.ser.control;
   
   if(!isValid(face_x)) return;
   if(!isValid(face_y)) return;
@@ -108,6 +108,6 @@ void loop() {
   }
   pos[1] = x_pos;
   pos[0] = y_pos;
-  Serial.println(x_pos);
-  radio.write(&pos. sizeof(pos));
+  Serial.println(focus);
+  radio.write(&pos, sizeof(pos));
 }
