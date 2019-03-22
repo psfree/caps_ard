@@ -14,6 +14,11 @@
 // Sets Our Variables
 unsigned long delayPanTime = 0;
 unsigned long delayTiltTime = 0;
+const long initPan = 100;
+const long initTilt = 90;
+const long initZoom = 90;
+const long initFocus = 90;
+
 
 // Servo Setup
 Servo PanServo;
@@ -28,15 +33,16 @@ const byte address[6] = "00001";
 // Position Array
 long pos[8];
 long posPan;
-long curPosPan = 100;
+long curPosPan = initPan;
 long posTilt;
-long curPosTilt = 90;
+long curPosTilt = initTilt;
 long posZoom;
 long posZoom2;
-long curPosZoom = 90;
+long curPosZoom = initZoom;
 long posFocus;
 long posFocus2;
-long curPosFocus = 90;
+long curPosFocus = initFocus;
+long posReset;
 
 
 void setup() {
@@ -66,7 +72,7 @@ void loop() {
     posZoom2 = pos[4];
     posFocus = pos[3];
     posFocus2 = pos[5];
-
+    posReset = pos[6];
     //Debug logging recieved values
 //            Serial.print("Received Values are:");
 //            Serial.print(posTilt);
@@ -136,6 +142,45 @@ void loop() {
     if (posFocus2 == 0 && curPosFocus > 45) {
       curPosFocus--;
     }
+
+    //Reset Button is E
+    if (posReset == 0){
+      while (curPosPan != initPan || curPosTilt != initTilt || curPosZoom != initZoom || curPosFocus != initFocus){
+        if (curPosPan > initPan){
+          curPosPan--;
+        }
+        else if (curPosPan < initPan){
+          curPosPan++;
+        }
+        
+        if (curPosTilt > initTilt){
+          curPosTilt--;
+        }
+        else if (curPosTilt < initTilt){
+          curPosTilt++;
+        }
+        
+        if (curPosZoom > initZoom){
+          curPosZoom--;
+        }
+        else if (curPosZoom < initZoom){
+          curPosZoom++;
+        }
+        
+        if (curPosFocus > initFocus){
+          curPosFocus--;
+        }
+        else if (curPosFocus < initFocus){
+          curPosFocus++;
+        }
+        
+        PanServo.write(curPosPan);
+        TiltServo.write(curPosTilt);
+        ZoomServo.write(curPosZoom);
+        FocusServo.write(curPosFocus);
+      }
+    }
+    
     ZoomServo.write(curPosZoom);
     FocusServo.write(curPosFocus);
 
