@@ -40,7 +40,7 @@ Servo ZoomServo;
 Servo FocusServo;
 
 //RF24 initiialise
-RF24 radio(7, 8); // CE, CSN 9,10 for joystick board
+RF24 radio(7, 8); // CE, CSN 9,10 for joystick board  8,7 CE,CSN for nano Breakout board
 const byte address[6] = "00001";
 
 // Position Array
