@@ -27,7 +27,7 @@
 
 
 
-#define MAX_DELAY  120
+#define MAX_DELAY  1
 
 // Sets Our Variables
 unsigned long delayPanTime = 0;
@@ -57,119 +57,132 @@ long posFocus2;
 long curPosFocus = 90;
 
 
+struct serdata { //7 bytes
+  char c1;  //1
+  char c2;  //1
+  float control;  //4
+  char newline; //1
+};
+
+union pcin {
+  serdata ser;
+  byte dl[7];
+};
+
+pcin rcv;
+byte rx_array[7];
+
+bool isValid(char c) {
+  if((c=='c')||(c=='r')||(c=='l')||(c=='d')||(c=='u')) {
+    return true;
+  }
+  return false;
+}
+long x_pos = 512;
+long y_pos = 512;
+
 void setup() {
   Serial.begin(9600);
-
+  Serial.println("Input Desired Mode");
   //Servo Setup
   PanServo.attach(PAN_PIN);
   TiltServo.attach(TILT_PIN);
   ZoomServo.attach(ZOOM_PIN);
   FocusServo.attach(FOCUS_PIN);
-
-  //Initialises Radio Stuff
-  radio.begin();
-  radio.openReadingPipe(0, address);
-  radio.setPALevel(RF24_PA_HIGH); // in ascending order of Power, MIN, LOW, HIGH, MAX
-  radio.startListening(); // sets this as a receiver
-
+  char c = ' ';
+  while(1) {
+    if(Serial.available())
+      c = Serial.read();
+      if(c=='\n') break;
+  }
 }
 
 void loop() {
-  if (radio.available()) {
-    //Read the positions from the radio
-    radio.read(&pos, sizeof(pos));
-    posPan = pos[1];
-    posTilt = pos[0];
-    posZoom = pos[2];
-    posZoom2 = pos[4];
-    posFocus = pos[3];
-    posFocus2 = pos[5];
-
-//Debug logging recieved values
-//            Serial.print("Received Values are:");
-//            Serial.print(posTilt);
-//            Serial.print(",");
-//            Serial.print(posPan);
-//            Serial.print(",");
-//            Serial.print(posFocus);
-//            Serial.print(",");
-//            Serial.print(posZoom);
-//            Serial.print(",");
-//            Serial.print(posFocus2);
-//            Serial.print(",");
-//            Serial.println(posZoom2);
-
-
-// Debug Current Pos Values
-//    Serial.print("Current Pos Values are:");
-//    Serial.print(curPosPan);
-//    Serial.print(",");
-//    Serial.print(curPosTilt);
-//    Serial.print(",");
-//    Serial.print(curPosFocus);
-//    Serial.print(",");
-//    Serial.println(curPosZoom);
-
-
-//     Debug Delay Values
-    Serial.print("Current Delay Values are:");
-    Serial.print(delayPanTime);
-    Serial.print(",");
-    Serial.println(delayTiltTime);
-
-    unsigned long curTime  = millis();
-    if ((curTime > delayPanTime) ) {
-      if (posPan > MAX_P_ANAL && curPosPan < MAX_PAN){
-        delayPanTime = map (posPan, MAX_P_ANAL, 1023, MAX_DELAY, 1) + millis();
-        curPosPan += 1;
-      }
-      else if (posPan < MIN_P_ANAL && curPosPan > MIN_PAN) {
-        delayPanTime = map (posPan, 0,MIN_P_ANAL, 1, MAX_DELAY)+ millis();
-        curPosPan -= 1;
-      }
-      else {
-        delayPanTime = millis();
-        
-      }
-      //delay(delayPanTime);
-      PanServo.write(curPosPan);
-    }
-
-    if ( (curTime > delayTiltTime)) {
-      if (posTilt > MAX_T_ANAL && curPosTilt < MAX_TILT) {
-        delayTiltTime = map (posTilt,MAX_T_ANAL, 1023, MAX_DELAY, 1) + millis();
-        curPosTilt += 1;
-      }
-      else if (posTilt < MIN_T_ANAL && curPosTilt > MIN_TILT) {
-        delayTiltTime = map (posTilt, 0, MIN_T_ANAL, 1, MAX_DELAY) + millis();
-        curPosTilt -= 1;
-      }
-      else {
-        delayTiltTime = millis();
-      }
-      //delay(delayTiltTime);
-      TiltServo.write(curPosTilt);
-    }
-
-    if (posZoom == 0 && curPosZoom < MAX_ZOOM) {
-      curPosZoom++;
-    }
-    if (posZoom2 == 0 && curPosZoom > MIN_ZOOM) {
-      curPosZoom--;
-    }
-
-    if (posFocus == 0 && curPosFocus < MAX_FOCUS) {
-      curPosFocus++;
-    }
-    if (posFocus2 == 0 && curPosFocus > MIN_FOCUS) {
-      curPosFocus--;
-    }
-    ZoomServo.write(curPosZoom);
-    FocusServo.write(curPosFocus);
-
+  if (Serial.available() < 7) {
+     // error
+     return;
   }
+  for(byte i=0; i<7; i++) {
+    rx_array[i] = Serial.read();
+  }
+  if(rx_array[6]!='\n')   return;
+  
+  for (byte i = 0; i < 7; i++) {
+     rcv.dl[i] = rx_array[i];
+  }
+  
+  char face_y = rcv.ser.c1;
+  char face_x = rcv.ser.c2;
+  float focus = rcv.ser.control;
 
+  char str[3] = {face_x, '\n', 0x00};
+  Serial.println(str);
+
+  if(face_x == 'r') {
+    x_pos = 950;
+  }
+  else if(face_x == 'l') {
+    x_pos = 20;
+  }
   else {
-    Serial.println("Fail");
+    x_pos = 512;
   }
+
+  if(face_y =='u') {
+    y_pos=950;
+  }
+  else if(face_y == 'd') {
+    y_pos=20;
+  }
+  else {
+    y_pos=512;
+  }
+
+  posPan = x_pos;
+  posTilt = y_pos;
+
+
+  Serial.print("Current Delay Values are:");
+  Serial.print(x_pos);
+  Serial.print(",");
+  Serial.println(y_pos);
+
+  unsigned long curTime  = millis();
+  if ((curTime > delayPanTime) ) {
+    if (posPan > MAX_P_ANAL && curPosPan < MAX_PAN){
+      delayPanTime = map (posPan, MAX_P_ANAL, 1023, MAX_DELAY, 1) + millis();
+      curPosPan += 1;
+      curPosZoom +=1;
+    }
+    else if (posPan < MIN_P_ANAL && curPosPan > MIN_PAN) {
+      delayPanTime = map (posPan, 0,MIN_P_ANAL, 1, MAX_DELAY)+ millis();
+      curPosPan -= 1;
+      curPosZoom -=1;
+    }
+    else {
+      delayPanTime = millis();  
+    }
+    //delay(delayPanTime);
+    PanServo.write(curPosPan);
+    ZoomServo.write(curPosZoom);
+  }
+
+  if ( (curTime > delayTiltTime)) {
+    if (posTilt > MAX_T_ANAL && curPosTilt < MAX_TILT) {
+      delayTiltTime = map (posTilt,MAX_T_ANAL, 1023, MAX_DELAY, 1) + millis();
+      curPosTilt += 1;
+      curPosFocus +=1;
+    }
+    else if (posTilt < MIN_T_ANAL && curPosTilt > MIN_TILT) {
+      delayTiltTime = map (posTilt, 0, MIN_T_ANAL, 1, MAX_DELAY) + millis();
+      curPosTilt -= 1;
+      curPosFocus -= 1;
+    }
+    else {
+      delayTiltTime = millis();
+    }
+    TiltServo.write(curPosTilt);
+    FocusServo.write(curPosFocus);
+  }  
+    //delay(delayTiltTime);  
 }

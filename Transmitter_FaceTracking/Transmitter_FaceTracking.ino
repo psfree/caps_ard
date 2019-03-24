@@ -67,7 +67,6 @@ void loop() {
   //    radio.write(&pos, sizeof(pos));
   //    //radio.write(&y_pos, sizeof(y_pos));
   //  }
-  char c;
   if (Serial.available() < 7) {
      // error
      return;
@@ -80,8 +79,8 @@ void loop() {
   for (byte i = 0; i < 7; i++) {
      rcv.dl[i] = rx_array[i];
   }
-  int face_y = rcv.ser.c1;
-  int face_x = rcv.ser.c2;
+  char face_y = rcv.ser.c1;
+  char face_x = rcv.ser.c2;
   float focus = rcv.ser.control;
   
   if(!isValid(face_x)) return;
