@@ -5,14 +5,14 @@
 
 #define PAN_PIN 9
 #define TILT_PIN 10
-#define ZOOM_PIN 5
-#define FOCUS_PIN 6
+#define ZOOM_PIN 6
+#define FOCUS_PIN 5
 
-#define MAX_ZOOM 135
-#define MIN_ZOOM 45
+#define MAX_ZOOM 175
+#define MIN_ZOOM 50
 
-#define MAX_FOCUS 135
-#define MIN_FOCUS 45
+#define MAX_FOCUS 140
+#define MIN_FOCUS 30
 
 #define MAX_PAN 180
 #define MIN_PAN 0
@@ -21,7 +21,7 @@
 
 
 #define MAX_TILT 180
-#define MIN_TILT 55
+#define MIN_TILT 30
 #define MAX_T_ANAL 535
 #define MIN_T_ANAL 465
 
@@ -46,15 +46,15 @@ const byte address[6] = "00001";
 // Position Array
 long pos[8];
 long posPan;
-long curPosPan = 100;
+long curPosPan = 80;
 long posTilt;
-long curPosTilt = 90;
+long curPosTilt = 65;
 long posZoom;
 long posZoom2;
-long curPosZoom = 90;
+long curPosZoom = 125;
 long posFocus;
 long posFocus2;
-long curPosFocus = 90;
+long curPosFocus = 80;
 
 
 void setup() {
@@ -78,12 +78,12 @@ void loop() {
   if (radio.available()) {
     //Read the positions from the radio
     radio.read(&pos, sizeof(pos));
-    posPan = pos[1];
-    posTilt = pos[0];
-    posZoom = pos[2];
-    posZoom2 = pos[4];
-    posFocus = pos[3];
-    posFocus2 = pos[5];
+    posPan = pos[1];//Y axis on JoyStick
+    posTilt = pos[0]; //X axis on JoyStick
+    posZoom = pos[2]; // Increase Zoom
+    posZoom2 = pos[4]; // Decrease Zoom
+    posFocus = pos[3]; //Increase Focus
+    posFocus2 = pos[5]; // Decrease Focus
 
 //Debug logging recieved values
 //            Serial.print("Received Values are:");
@@ -101,13 +101,13 @@ void loop() {
 
 
 // Debug Current Pos Values
-    Serial.print("Current Pos Values are:");
+    Serial.print("Current Pos Values are: P=");
     Serial.print(curPosPan);
-    Serial.print(",");
+    Serial.print(",T=");
     Serial.print(curPosTilt);
-    Serial.print(",");
+    Serial.print(",F=");
     Serial.print(curPosFocus);
-    Serial.print(",");
+    Serial.print(",Z=");
     Serial.println(curPosZoom);
 
 
