@@ -43,7 +43,7 @@ const long initZoom = 125;
 const long initFocus = 80;
 
 //RF24 initiialise
-RF24 radio(7, 8); // CE, CSN 9,10 for joystick board  7,8 CE,CSN for nano Breakout board
+RF24 radio(7, 8); // CE, CSN 9,10 for joystick board  7,8 CE,CSN for breakout PCB
 const byte address[6] = "00001";
 
 // Position Array
@@ -180,7 +180,13 @@ void loop() {
     FocusServo.write(curPosFocus);
     
     //Reset Button is E
-    if (toggleReset == 0){
+    /* when button E is pressed Mechanism resets to original value
+    *  we go through a while loop that changes the curPos gradually.
+    *  This adds stability to the reset, in case the movement stops
+    *  before a full reset. 
+    */
+    if (toggleReset == 0){ 
+
       while (curPosPan != initPan || curPosTilt != initTilt || curPosZoom != initZoom || curPosFocus != initFocus){
         if (curPosPan > initPan){
           curPosPan--;
@@ -209,7 +215,7 @@ void loop() {
         else if (curPosFocus < initFocus){
           curPosFocus++;
         }
-        delay(10);
+        delay(10);// slows the reset
         PanServo.write(curPosPan);
         TiltServo.write(curPosTilt);
         ZoomServo.write(curPosZoom);
