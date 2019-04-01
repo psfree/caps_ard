@@ -62,14 +62,7 @@ void setup() {
   pinMode(F_btn, INPUT);
   digitalWrite(F_btn, HIGH);
 }
-/*
-@@@JASON@@@@
 
-Please create a way to send all 8 pieces of information over pos array
-
-+ look at https://github.com/psfree/caps_ard for receiver code to do receiving as well
-
-*/
 void loop() {
   x_pos = analogRead (x_key);
   y_pos = analogRead (y_key);
