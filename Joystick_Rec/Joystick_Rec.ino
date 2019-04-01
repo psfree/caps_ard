@@ -118,14 +118,14 @@ void loop() {
 
 
     // Debug Current Pos Values
-    //    Serial.print("Current Pos Values are: P=");
-    //    Serial.print(curPosPan);
-    //    Serial.print(",T=");
-    //    Serial.print(curPosTilt);
-    //    Serial.print(",F=");
-    //    Serial.print(curPosFocus);
-    //    Serial.print(",Z=");
-    //    Serial.println(curPosZoom);
+//        Serial.print("Current Pos Values are: P=");
+//        Serial.print(curPosPan);
+//        Serial.print(",T=");
+//        Serial.print(curPosTilt);
+//        Serial.print(",F=");
+//        Serial.print(curPosFocus);
+//        Serial.print(",Z=");
+//        Serial.println(curPosZoom);
 
 
     //     Debug Delay Values
