@@ -1,21 +1,15 @@
 #include <SPI.h>
 #include <nRF24L01.h>
 #include <RF24.h>
-RF24 radio(7, 8); // CE,CSN
+RF24 radio(9, 10); // CE,CSN
 const byte address[6] = "00001";
 
-char input[10];
-int count = 0;
-
-char mode = 'n';
-char faceInput = 'c';
-char faceInput2 = 'c';
 float focus;
 int x_key = A5;
 int y_key = A0;
 long x_pos = 512;
-long y_pos;
-long pos[2];
+long y_pos = 512;
+long pos[8];
 
 struct serdata { //7 bytes
   char c1;  //1
@@ -75,6 +69,7 @@ void loop() {
   //  }
   if (Serial.available() < 7) {
      // error
+     radio.write(&pos, sizeof(pos));
      return;
   }
 
@@ -89,14 +84,14 @@ void loop() {
   char face_y = rcv.ser.c1;
   char face_x = rcv.ser.c2;
   float focus = rcv.ser.control;
-  char str[3] = {face_x, '\n', 0x00};
+  char str[3] = {face_y, '\n', 0x00};
   Serial.println(str);
 
 
-  if(face_x == 'r') {
+  if(face_x == 'l') {
     x_pos = 950;
   }
-  else if(face_x == 'l') {
+  else if(face_x == 'r') {
     x_pos = 20;
   }
   else {
@@ -112,7 +107,13 @@ void loop() {
   else {
     y_pos=512;
   }
+  for(int i =0; i<8; i++) {
+    pos[i]=1;
+  }
   pos[1] = x_pos;
   pos[0] = y_pos;
+  for(int i =0; i<8; i++) {
+    Serial.println(pos[i]);
+  }
   radio.write(&pos, sizeof(pos));
 }
