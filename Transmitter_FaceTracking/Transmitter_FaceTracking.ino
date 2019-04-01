@@ -46,6 +46,12 @@ void setup() {
   pinMode (x_key, INPUT) ;
   pinMode (y_key, INPUT) ;
 
+  char c = ' ';
+  while(1) {
+    if(Serial.available())
+      c = Serial.read();
+      if(c=='\n') break;
+  }
 
 }
 
@@ -75,6 +81,7 @@ void loop() {
   for(byte i=0; i<7; i++) {
     rx_array[i] = Serial.read();
   }
+  if(rx_array[6]!='\n')   return;
   
   for (byte i = 0; i < 7; i++) {
      rcv.dl[i] = rx_array[i];
@@ -82,9 +89,9 @@ void loop() {
   char face_y = rcv.ser.c1;
   char face_x = rcv.ser.c2;
   float focus = rcv.ser.control;
-  
-  if(!isValid(face_x)) return;
-  if(!isValid(face_y)) return;
+  char str[3] = {face_x, '\n', 0x00};
+  Serial.println(str);
+
 
   if(face_x == 'r') {
     x_pos = 950;
@@ -107,6 +114,5 @@ void loop() {
   }
   pos[1] = x_pos;
   pos[0] = y_pos;
-  Serial.println(focus);
   radio.write(&pos, sizeof(pos));
 }
