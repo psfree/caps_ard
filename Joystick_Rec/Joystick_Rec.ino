@@ -1,7 +1,9 @@
+#include <PID_v1.h>
 #include <Servo.h>
 #include <SPI.h>
 #include <nRF24L01.h>
 #include <RF24.h>
+
 
 #define PAN_PIN 9
 #define TILT_PIN 10
@@ -225,8 +227,6 @@ void loop() {
         FocusServo.write(curPosFocus);
       }
     }
-
-//    1
 
   }
 
