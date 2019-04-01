@@ -38,7 +38,7 @@ void setup() {
   radio.openWritingPipe(address);
   radio.setRetries(25, 25);
   radio.setPALevel(RF24_PA_HIGH); // in ascending order of Power, MIN, LOW, HIGH, MAX
-  radio.stopListening(); // sets this as trasmitter
+  radio.stopListening(); // sets this as transmitter
   Serial.begin(9600);
 
   pinMode (x_key, INPUT) ;
