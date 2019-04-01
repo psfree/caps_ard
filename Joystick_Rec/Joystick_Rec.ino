@@ -103,29 +103,29 @@ void loop() {
     toggleMode = pos[7]; // E button
 
     //    Debug logging recieved values
-    Serial.print("Received Values are:");
-    Serial.print(posTilt);
-    Serial.print(",");
-    Serial.print(posPan);
-    Serial.print(",");
-    Serial.print(posFocus);
-    Serial.print(",");
-    Serial.print(posZoom);
-    Serial.print(",");
-    Serial.print(posFocus2);
-    Serial.print(",");
-    Serial.println(posZoom2);
+//    Serial.print("Received Values are:");
+//    Serial.print(posTilt);
+//    Serial.print(",");
+//    Serial.print(posPan);
+//    Serial.print(",");
+//    Serial.print(posFocus);
+//    Serial.print(",");
+//    Serial.print(posZoom);
+//    Serial.print(",");
+//    Serial.print(posFocus2);
+//    Serial.print(",");
+//    Serial.println(posZoom2);
 
 
     // Debug Current Pos Values
-    //    Serial.print("Current Pos Values are: P=");
-    //    Serial.print(curPosPan);
-    //    Serial.print(",T=");
-    //    Serial.print(curPosTilt);
-    //    Serial.print(",F=");
-    //    Serial.print(curPosFocus);
-    //    Serial.print(",Z=");
-    //    Serial.println(curPosZoom);
+        Serial.print("Current Pos Values are: P=");
+        Serial.print(curPosPan);
+        Serial.print(",T=");
+        Serial.print(curPosTilt);
+        Serial.print(",F=");
+        Serial.print(curPosFocus);
+        Serial.print(",Z=");
+        Serial.println(curPosZoom);
 
 
     //     Debug Delay Values
