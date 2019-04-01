@@ -25,9 +25,11 @@
 #define MAX_T_ANAL 535
 #define MIN_T_ANAL 465
 
-#define MAX_DELAY  120
+// For Fuzzy Controls
+#define MAX_DELAY  80
+#define MIN_DELAY 0
 
-// Sets Our Variables
+
 unsigned long delayPanTime = 0;
 unsigned long delayTiltTime = 0;
 
@@ -58,7 +60,8 @@ long curPosZoom = initZoom;
 long posFocus;
 long posFocus2;
 long curPosFocus = initFocus;
-long toggleReset;
+bool toggleReset;
+bool toggleMode;
 
 
 void setup() {
@@ -95,32 +98,32 @@ void loop() {
     posFocus = pos[3]; //Increase Focus
     posFocus2 = pos[5]; // Decrease Focus
     toggleReset = pos[6]; // F button
-//    toggleMode = pos[7]; // E button
+    toggleMode = pos[7]; // E button
 
-//    Debug logging recieved values
-                Serial.print("Received Values are:");
-                Serial.print(posTilt);
-                Serial.print(",");
-                Serial.print(posPan);
-                Serial.print(",");
-                Serial.print(posFocus);
-                Serial.print(",");
-                Serial.print(posZoom);
-                Serial.print(",");
-                Serial.print(posFocus2);
-                Serial.print(",");
-                Serial.println(posZoom2);
+    //    Debug logging recieved values
+    Serial.print("Received Values are:");
+    Serial.print(posTilt);
+    Serial.print(",");
+    Serial.print(posPan);
+    Serial.print(",");
+    Serial.print(posFocus);
+    Serial.print(",");
+    Serial.print(posZoom);
+    Serial.print(",");
+    Serial.print(posFocus2);
+    Serial.print(",");
+    Serial.println(posZoom2);
 
 
     // Debug Current Pos Values
-//    Serial.print("Current Pos Values are: P=");
-//    Serial.print(curPosPan);
-//    Serial.print(",T=");
-//    Serial.print(curPosTilt);
-//    Serial.print(",F=");
-//    Serial.print(curPosFocus);
-//    Serial.print(",Z=");
-//    Serial.println(curPosZoom);
+    //    Serial.print("Current Pos Values are: P=");
+    //    Serial.print(curPosPan);
+    //    Serial.print(",T=");
+    //    Serial.print(curPosTilt);
+    //    Serial.print(",F=");
+    //    Serial.print(curPosFocus);
+    //    Serial.print(",Z=");
+    //    Serial.println(curPosZoom);
 
 
     //     Debug Delay Values
@@ -132,11 +135,11 @@ void loop() {
     unsigned long curTime  = millis();
     if ((curTime > delayPanTime) ) {
       if (posPan > MAX_P_ANAL && curPosPan < MAX_PAN) {
-        delayPanTime = map (posPan, MAX_P_ANAL, 1023, MAX_DELAY, 1) + millis();
+        delayPanTime = map (posPan, MAX_P_ANAL, 1023, MAX_DELAY, MIN_DELAY) + millis();
         curPosPan += 1;
       }
       else if (posPan < MIN_P_ANAL && curPosPan > MIN_PAN) {
-        delayPanTime = map (posPan, 0, MIN_P_ANAL, 1, MAX_DELAY) + millis();
+        delayPanTime = map (posPan, 0, MIN_P_ANAL, MIN_DELAY, MAX_DELAY) + millis();
         curPosPan -= 1;
       }
       else {
@@ -149,11 +152,11 @@ void loop() {
 
     if ( (curTime > delayTiltTime)) {
       if (posTilt > MAX_T_ANAL && curPosTilt < MAX_TILT) {
-        delayTiltTime = map (posTilt, MAX_T_ANAL, 1023, MAX_DELAY, 1) + millis();
+        delayTiltTime = map (posTilt, MAX_T_ANAL, 1023, MAX_DELAY, MIN_DELAY) + millis();
         curPosTilt += 1;
       }
       else if (posTilt < MIN_T_ANAL && curPosTilt > MIN_TILT) {
-        delayTiltTime = map (posTilt, 0, MIN_T_ANAL, 1, MAX_DELAY) + millis();
+        delayTiltTime = map (posTilt, 0, MIN_T_ANAL, MIN_DELAY, MAX_DELAY) + millis();
         curPosTilt -= 1;
       }
       else {
@@ -178,41 +181,41 @@ void loop() {
     }
     ZoomServo.write(curPosZoom);
     FocusServo.write(curPosFocus);
-    
+
     //Reset Button is E
     /* when button E is pressed Mechanism resets to original value
-    *  we go through a while loop that changes the curPos gradually.
-    *  This adds stability to the reset, in case the movement stops
-    *  before a full reset. 
+       we go through a while loop that changes the curPos gradually.
+       This adds stability to the reset, in case the movement stops
+       before a full reset.
     */
-    if (toggleReset == 0){ 
+    if (toggleReset == 0) {
 
-      while (curPosPan != initPan || curPosTilt != initTilt || curPosZoom != initZoom || curPosFocus != initFocus){
-        if (curPosPan > initPan){
+      while (curPosPan != initPan || curPosTilt != initTilt || curPosZoom != initZoom || curPosFocus != initFocus) {
+        if (curPosPan > initPan) {
           curPosPan--;
         }
-        else if (curPosPan < initPan){
+        else if (curPosPan < initPan) {
           curPosPan++;
         }
-        
-        if (curPosTilt > initTilt){
+
+        if (curPosTilt > initTilt) {
           curPosTilt--;
         }
-        else if (curPosTilt < initTilt){
+        else if (curPosTilt < initTilt) {
           curPosTilt++;
         }
-        
-        if (curPosZoom > initZoom){
+
+        if (curPosZoom > initZoom) {
           curPosZoom--;
         }
-        else if (curPosZoom < initZoom){
+        else if (curPosZoom < initZoom) {
           curPosZoom++;
         }
-        
-        if (curPosFocus > initFocus){
+
+        if (curPosFocus > initFocus) {
           curPosFocus--;
         }
-        else if (curPosFocus < initFocus){
+        else if (curPosFocus < initFocus) {
           curPosFocus++;
         }
         delay(10);// slows the reset
@@ -222,9 +225,8 @@ void loop() {
         FocusServo.write(curPosFocus);
       }
     }
-    
-    ZoomServo.write(curPosZoom);
-    FocusServo.write(curPosFocus);
+
+//    1
 
   }
 
