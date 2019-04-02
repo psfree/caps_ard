@@ -104,21 +104,6 @@ void loop() {
   e_pos = digitalRead (E_btn);
   f_pos = digitalRead (F_btn);
 
-
-  if (count < 50) {
-    pos[2] = 0;
-    pos[4] = 1;
-  }
-  else {
-    pos[2] = 1;
-    pos[4] = 0;
-  }
-  if (forward) count++;
-  else count--;
-  if (count == 0) {
-    forward = true;
-  }
-  if (count == 100) forward = false;
   if ( (f_pos == 0) && (!stillpress) ) {
     pressed_F = !pressed_F;
     Serial.println("Entering FaceTrack mode");
@@ -129,7 +114,7 @@ void loop() {
 
   if (pressed_F) {
     if (Serial.available() < 7) {
-      radio.write(&pos, sizeof(pos));
+      //radio.write(&pos, sizeof(pos));
       return;
     }
     for (byte i = 0; i < 7; i++) {
@@ -151,10 +136,10 @@ void loop() {
     char face_y = rcv.ser.c1;
     char face_x = rcv.ser.c2;
     float focus = rcv.ser.control;
-    if (face_x == 'l') {
+    if (face_x == 'r') {
       x_pos = 950;
     }
-    else if (face_x == 'r') {
+    else if (face_x == 'l') {
       x_pos = 20;
     }
     else {
