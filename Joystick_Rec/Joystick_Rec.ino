@@ -4,28 +4,31 @@
 #include <nRF24L01.h>
 #include <RF24.h>
 
-
 #define PAN_PIN 9
 #define TILT_PIN 10
 #define ZOOM_PIN 6
 #define FOCUS_PIN 5
 
-#define MAX_ZOOM 175
-#define MIN_ZOOM 50
+#define MAX_ZOOM 145
+#define MIN_ZOOM 45
+const long initZoom = 90;
 
-#define MAX_FOCUS 140
+#define MAX_FOCUS 150 
 #define MIN_FOCUS 30
+const long initFocus = 80;
 
 #define MAX_PAN 180
 #define MIN_PAN 0
 #define MAX_P_ANAL 535
 #define MIN_P_ANAL 465
+const long initPan = 80;
 
 
 #define MAX_TILT 180
 #define MIN_TILT 30
 #define MAX_T_ANAL 535
 #define MIN_T_ANAL 465
+const long initTilt = 65;
 
 // For Fuzzy Controls
 #define MAX_DELAY  80
@@ -41,10 +44,7 @@ Servo TiltServo;
 Servo ZoomServo;
 Servo FocusServo;
 
-const long initPan = 80;
-const long initTilt = 65;
-const long initZoom = 125;
-const long initFocus = 80;
+
 
 //RF24 initiialise
 RF24 radio(7, 8); // CE, CSN 9,10 for joystick board  7,8 CE,CSN for breakout PCB
@@ -103,29 +103,29 @@ void loop() {
     toggleMode = pos[7]; // E button
 
     //    Debug logging recieved values
-    Serial.print("Received Values are:");
-    Serial.print(posTilt);
-    Serial.print(",");
-    Serial.print(posPan);
-    Serial.print(",");
-    Serial.print(posFocus);
-    Serial.print(",");
-    Serial.print(posZoom);
-    Serial.print(",");
-    Serial.print(posFocus2);
-    Serial.print(",");
-    Serial.println(posZoom2);
+    //Serial.print("Received Values are:");
+    //    Serial.print(posTilt);
+    //    Serial.print(",");
+    //    Serial.print(posPan);
+    //    Serial.print(",");
+    //    Serial.print(posFocus);
+    //    Serial.print(",");
+    //    Serial.print(posZoom);
+    //    Serial.print(",");
+    //    Serial.print(posFocus2);
+    //    Serial.print(",");
+    //    Serial.println(posZoom2);
 
 
     // Debug Current Pos Values
-//        Serial.print("Current Pos Values are: P=");
-//        Serial.print(curPosPan);
-//        Serial.print(",T=");
-//        Serial.print(curPosTilt);
-//        Serial.print(",F=");
-//        Serial.print(curPosFocus);
-//        Serial.print(",Z=");
-//        Serial.println(curPosZoom);
+            Serial.print("Current Pos Values are: P=");
+            Serial.print(curPosPan);
+            Serial.print(",T=");
+            Serial.print(curPosTilt);
+            Serial.print(",F=");
+            Serial.print(curPosFocus);
+            Serial.print(",Z=");
+            Serial.println(curPosZoom);
 
 
     //     Debug Delay Values
