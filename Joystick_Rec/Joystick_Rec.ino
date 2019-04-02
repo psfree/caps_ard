@@ -1,4 +1,3 @@
-#include <PID_v1.h>
 #include <Servo.h>
 #include <SPI.h>
 #include <nRF24L01.h>
@@ -51,7 +50,8 @@ RF24 radio(7, 8); // CE, CSN 9,10 for joystick board  7,8 CE,CSN for breakout PC
 const byte address[6] = "00001";
 
 // Position Array
-long pos[8];
+#define POS_SIZE 9
+long pos[POS_SIZE];
 long posPan;
 long curPosPan = initPan;
 long posTilt;
@@ -101,6 +101,16 @@ void loop() {
     posFocus2 = pos[5]; // Decrease Focus
     toggleReset = pos[6]; // F button
     toggleMode = pos[7]; // E button
+
+    if(pos[8]!=-1) {
+      long d = 0;
+      while (1) {
+        if (radio.available())
+          radio.read(&d, sizeof(d));
+          if (d == -1) break;
+      }
+      return;
+    }
 
     //    Debug logging recieved values
     //Serial.print("Received Values are:");

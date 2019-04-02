@@ -49,13 +49,6 @@ void setup() {
 
 }
 
-bool isValid(char c) {
-  if((c=='c')||(c=='r')||(c=='l')||(c=='d')||(c=='u')) {
-    return true;
-  }
-  return false;
-}
-
 void loop() {
   //  if (mode == 'j') {
   //    x_pos = analogRead (x_key) ;
