@@ -167,18 +167,22 @@ void loop() {
       TiltServo.write(curPosTilt);
     }
 
-    if (posZoom == 0 && curPosZoom < MAX_ZOOM) {
+    if (posZoom == 0) {
       curPosZoom++;
     }
-    if (posZoom2 == 0 && curPosZoom > MIN_ZOOM) {
+    if (posZoom2 == 0 && curPosZoom) {
       curPosZoom--;
     }
 
-    if (posFocus == 0 && curPosFocus < MAX_FOCUS) {
+    if (posFocus == 0 && curPosFocus) {
       curPosFocus++;
     }
-    if (posFocus2 == 0 && curPosFocus > MIN_FOCUS) {
+    if (posFocus2 == 0 && curPosFocus) {
       curPosFocus--;
+    if (curPosZoom > MAX_ZOOM) curPosZoom = MAX_ZOOM;
+    if (curPosZoom < MIN_ZOOM) curPosZoom = MIN_ZOOM;
+    if (curPosTilt > MAX_TILT) curPosTilt = MAX_TILT;
+    if (curPosTilt > MAX_TILT) curPosTilt = MAX_TILT;  
     }
     ZoomServo.write(curPosZoom);
     FocusServo.write(curPosFocus);
