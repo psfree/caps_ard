@@ -13,14 +13,16 @@ int const Up_btn = 2; // zoom ++
 int const Right_btn = 3; // focus ++
 int const Down_btn = 4; // zoom --
 int const Left_btn = 5; // focus --
-int const E_btn = 6;
-int const F_btn = 7;
-long up_pos;
-long right_pos;
-long down_pos;
-long left_pos;
-long e_pos;
-long f_pos;
+int const E_btn = 6; // Reset 
+int const F_btn = 7; // Face Tracking
+int const K_btn = 8; // K button
+int up_pos;
+int right_pos;
+int down_pos;
+int left_pos;
+int e_pos;
+int f_pos;
+int k_pos;
 
 boolean pressed_Up = false;
 boolean pressed_Right = false;
@@ -28,12 +30,13 @@ boolean pressed_Down = false;
 boolean pressed_Left = false;
 boolean pressed_E = false;
 boolean pressed_F = false;
+boolean pressed_K = false;
 
 boolean stillpress = false;
 //facetracking variables
 float focus;
-long x_pos = 512;
-long y_pos = 512;
+int x_pos = 512;
+int y_pos = 512;
 
 //facetracking structs
 struct serdata { //7 bytes
@@ -51,8 +54,8 @@ union pcin {
 pcin rcv;
 byte rx_array[7];
 
-
-long pos[8];
+#define SIZE_POS 10
+int pos[SIZE_POS];
 
 void setup() {
   radio.begin();
@@ -82,6 +85,9 @@ void setup() {
 
   pinMode(F_btn, INPUT);
   digitalWrite(F_btn, HIGH);
+  
+  pinMode(K_btn, INPUT);
+  digitalWrite(K_btn, HIGH);
 }
 /*
   @@@JASON@@@@
@@ -103,6 +109,7 @@ void loop() {
   left_pos = digitalRead (Left_btn);
   e_pos = digitalRead (E_btn);
   f_pos = digitalRead (F_btn);
+  k_pos = digitalRead (K_btn);
 
   if ( (f_pos == 0) && (!stillpress) ) {
     pressed_F = !pressed_F;
@@ -157,6 +164,7 @@ void loop() {
     }
     pos[1] = x_pos;
     pos[0] = y_pos;
+    pos[SIZE_POS-1] = -1;
   }
   else {
     pos[0] = x_pos;
@@ -167,6 +175,9 @@ void loop() {
     pos[5] = left_pos;
     pos[6] = e_pos;
     pos[7] = f_pos;
+    pos[8] = k_pos;
+    pos[SIZE_POS-1] = -1;
+    
   }
   Serial.println(x_pos);
   Serial.println(y_pos);
@@ -176,6 +187,8 @@ void loop() {
   Serial.println(left_pos);
   Serial.println(e_pos);
   Serial.println(f_pos);
+  Serial.println(k_pos);
+  Serial.println(pos[SIZE_POS-1]);
 
   radio.write(&pos, sizeof(pos));
   //dio.write(&y_pos, sizeof(y_pos));
