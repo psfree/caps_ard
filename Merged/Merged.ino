@@ -15,12 +15,12 @@ int const Down_btn = 4; // zoom --
 int const Left_btn = 5; // focus --
 int const E_btn = 6;
 int const F_btn = 7;
-long up_pos;
-long right_pos;
-long down_pos;
-long left_pos;
-long e_pos;
-long f_pos;
+int up_pos;
+int right_pos;
+int down_pos;
+int left_pos;
+int e_pos;
+int f_pos;
 
 boolean pressed_Up = false;
 boolean pressed_Right = false;
@@ -32,8 +32,8 @@ boolean pressed_F = false;
 boolean stillpress = false;
 //facetracking variables
 float focus;
-long x_pos = 512;
-long y_pos = 512;
+int x_pos = 512;
+int y_pos = 512;
 
 //facetracking structs
 struct serdata { //7 bytes
@@ -52,7 +52,7 @@ pcin rcv;
 byte rx_array[7];
 
 #define POS_SIZE 9
-long pos[POS_SIZE];
+int pos[POS_SIZE];
 
 void setup() {
   radio.begin();
