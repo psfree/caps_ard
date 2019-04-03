@@ -75,11 +75,40 @@ void setup() {
   ZoomServo.attach(ZOOM_PIN);
   FocusServo.attach(FOCUS_PIN);
   // Set Servo Init Position
+  while (curPosPan != initPan || curPosTilt != initTilt || curPosZoom != initZoom || curPosFocus != initFocus) {
+    if (curPosPan > initPan) {
+      curPosPan--;
+    }
+    else if (curPosPan < initPan) {
+      curPosPan++;
+    }
 
-  PanServo.write(initPan);
-  PanServo.write(initTilt);
-  PanServo.write(initFocus);
-  PanServo.write(initZoom);
+    if (curPosTilt > initTilt) {
+      curPosTilt--;
+    }
+    else if (curPosTilt < initTilt) {
+      curPosTilt++;
+    }
+
+    if (curPosZoom > initZoom) {
+      curPosZoom--;
+    }
+    else if (curPosZoom < initZoom) {
+      curPosZoom++;
+    }
+
+    if (curPosFocus > initFocus) {
+      curPosFocus--;
+    }
+    else if (curPosFocus < initFocus) {
+      curPosFocus++;
+    }
+    delay(10);// slows the reset
+    PanServo.write(curPosPan);
+    TiltServo.write(curPosTilt);
+    ZoomServo.write(curPosZoom);
+    FocusServo.write(curPosFocus);
+  }
 
   //Initialises Radio Stuff
   radio.begin();
