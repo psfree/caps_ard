@@ -1,7 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 import pdb
-import imutils
 from imutils import paths
 import numpy as np
 import cv2
@@ -241,7 +240,7 @@ def main():
     
     # open the image capture device
     
-    cap = cv2.VideoCapture(0)
+    cap = cv2.VideoCapture(1)
     (ret, frame) = cap.read()
 
     event_interval = 1.5
@@ -270,7 +269,7 @@ def main():
             framecount =0
             
             
-        frame = imutils.resize(frame, width=720)
+    
         (boxes, detect_new) = tracking.boxframes(frame)
         color = (GREEN if detect_new else BLUE)
         draw_boxes(frame, boxes, color)
@@ -307,7 +306,7 @@ def main():
             (0, 0, 0xFF),
             3,
             )
-        fudge=70
+        fudge=30
         cx = tracking.cx
         cy = tracking.cy
         s1 = b'c'

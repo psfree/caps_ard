@@ -51,8 +51,8 @@ union pcin {
 pcin rcv;
 byte rx_array[7];
 
-#define POS_SIZE 9
-long pos[POS_SIZE];
+
+long pos[8];
 
 void setup() {
   radio.begin();
@@ -93,7 +93,6 @@ void setup() {
 */
 
 int count = 50;
-boolean first = true;
 boolean forward = true;
 void loop() {
   x_pos = analogRead (x_key);
@@ -104,10 +103,7 @@ void loop() {
   left_pos = digitalRead (Left_btn);
   e_pos = digitalRead (E_btn);
   f_pos = digitalRead (F_btn);
-  if(first) {  //wait for values to settle
-    first=false;
-    return;
-  }
+
   if ( (f_pos == 0) && (!stillpress) ) {
     pressed_F = !pressed_F;
     Serial.println("Entering FaceTrack mode");
@@ -159,12 +155,8 @@ void loop() {
     else {
       y_pos = 512;
     }
-    for(int i=0; i<POS_SIZE; i++) {
-      pos[i] = 1;
-    }
     pos[1] = x_pos;
     pos[0] = y_pos;
-    pos[8] = -1;
   }
   else {
     pos[0] = x_pos;
@@ -175,7 +167,6 @@ void loop() {
     pos[5] = left_pos;
     pos[6] = e_pos;
     pos[7] = f_pos;
-    pos[8] = -1;
   }
   Serial.println(x_pos);
   Serial.println(y_pos);
