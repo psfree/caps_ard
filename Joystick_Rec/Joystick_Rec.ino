@@ -72,7 +72,6 @@ bool zoomInc = false;
 bool zoomDec = false;
 
 void setup() {
-  Serial.begin(9600);
 
   //Servo Setup
   PanServo.attach(PAN_PIN);
@@ -81,47 +80,48 @@ void setup() {
   FocusServo.attach(FOCUS_PIN);
   // Set Servo Init Position
 
-      while (curPosPan != initPan || curPosTilt != initTilt || curPosZoom != initZoom || curPosFocus != initFocus) {
-        if (curPosPan > initPan) {
-          curPosPan--;
-        }
-        else if (curPosPan < initPan) {
-          curPosPan++;
-        }
+  while (curPosPan != initPan || curPosTilt != initTilt || curPosZoom != initZoom || curPosFocus != initFocus) {
+    if (curPosPan > initPan) {
+      curPosPan--;
+    }
+    else if (curPosPan < initPan) {
+      curPosPan++;
+    }
 
-        if (curPosTilt > initTilt) {
-          curPosTilt--;
-        }
-        else if (curPosTilt < initTilt) {
-          curPosTilt++;
-        }
+    if (curPosTilt > initTilt) {
+      curPosTilt--;
+    }
+    else if (curPosTilt < initTilt) {
+      curPosTilt++;
+    }
 
-        if (curPosZoom > initZoom) {
-          curPosZoom--;
+    if (curPosZoom > initZoom) {
+      curPosZoom--;
 
-        }
-        else if (curPosZoom < initZoom) {
-          curPosZoom++;
-        }
+    }
+    else if (curPosZoom < initZoom) {
+      curPosZoom++;
+    }
 
-        if (curPosFocus > initFocus) {
-          curPosFocus--;
-        }
-        else if (curPosFocus < initFocus) {
-          curPosFocus++;
-        }
-        delay(10);// slows the reset
-        PanServo.write(curPosPan);
-        TiltServo.write(curPosTilt);
-        ZoomServo.write(curPosZoom);
-        FocusServo.write(curPosFocus);
-      }
+    if (curPosFocus > initFocus) {
+      curPosFocus--;
+    }
+    else if (curPosFocus < initFocus) {
+      curPosFocus++;
+    }
+    delay(10);// slows the reset
+    PanServo.write(curPosPan);
+    TiltServo.write(curPosTilt);
+    ZoomServo.write(curPosZoom);
+    FocusServo.write(curPosFocus);
+  }
 
   //Initialises Radio Stuff
   radio.begin();
   radio.openReadingPipe(0, address);
   radio.setPALevel(RF24_PA_HIGH); // in ascending order of Power, MIN, LOW, HIGH, MAX
   radio.startListening(); // sets this as a receiver
+  Serial.begin(9600);
 
 }
 
@@ -247,7 +247,7 @@ void loop() {
 
     if (posFocus == 0) {
       curPosFocus++;
-     // cPFF = curPosFocus; // get us off this line 
+      // cPFF = curPosFocus; // get us off this line
     }
     if (posFocus2 == 0) {
       curPosFocus--;
