@@ -12,7 +12,7 @@
 #define MIN_ZOOM 45
 const long initZoom = 90;
 
-#define MAX_FOCUS 150 
+#define MAX_FOCUS 150
 #define MIN_FOCUS 30
 const long initFocus = 80;
 
@@ -50,17 +50,18 @@ RF24 radio(7, 8); // CE, CSN 9,10 for joystick board  7,8 CE,CSN for breakout PC
 const byte address[6] = "00001";
 
 // Position Array
-long pos[8];
-long posPan;
-long curPosPan = initPan;
-long posTilt;
-long curPosTilt = initTilt;
-long posZoom;
-long posZoom2;
-long curPosZoom = initZoom;
-long posFocus;
-long posFocus2;
-long curPosFocus = initFocus;
+#define POS_SIZE 9
+int pos[POS_SIZE];
+int posPan;
+int curPosPan = initPan;
+int posTilt;
+int curPosTilt = initTilt;
+int posZoom;
+int posZoom2;
+int curPosZoom = initZoom;
+int posFocus;
+int posFocus2;
+int curPosFocus = initFocus;
 bool toggleReset;
 bool toggleMode;
 
@@ -101,6 +102,10 @@ void loop() {
     toggleReset = pos[6]; // F button
     toggleMode = pos[7]; // E button
 
+    if (pos[8] != -1) {
+      return;
+    }
+
     //    Debug logging recieved values
     //Serial.print("Received Values are:");
     //    Serial.print(posTilt);
@@ -117,14 +122,14 @@ void loop() {
 
 
     // Debug Current Pos Values
-            Serial.print("Current Pos Values are: P=");
-            Serial.print(curPosPan);
-            Serial.print(",T=");
-            Serial.print(curPosTilt);
-            Serial.print(",F=");
-            Serial.print(curPosFocus);
-            Serial.print(",Z=");
-            Serial.println(curPosZoom);
+    Serial.print("Current Pos Values are: P=");
+    Serial.print(curPosPan);
+    Serial.print(",T=");
+    Serial.print(curPosTilt);
+    Serial.print(",F=");
+    Serial.print(curPosFocus);
+    Serial.print(",Z=");
+    Serial.println(curPosZoom);
 
 
     //     Debug Delay Values
