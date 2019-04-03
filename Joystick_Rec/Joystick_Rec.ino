@@ -1,4 +1,3 @@
-#include <PID_v1.h>
 #include <Servo.h>
 #include <SPI.h>
 #include <nRF24L01.h>
@@ -232,5 +231,9 @@ void loop() {
 
   else {
     Serial.println("Fail");
+    PanServo.write(curPosPan);
+    TiltServo.write(curPosTilt);
+    ZoomServo.write(curPosZoom);
+    FocusServo.write(curPosFocus);
   }
 }
