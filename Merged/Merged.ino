@@ -185,7 +185,6 @@ void loop() {
   Serial.println(left_pos);
   Serial.println(e_pos);
   Serial.println(f_pos);
-  Serial.println(pos[8]);
 
   radio.write(&pos, sizeof(pos));
   //dio.write(&y_pos, sizeof(y_pos));

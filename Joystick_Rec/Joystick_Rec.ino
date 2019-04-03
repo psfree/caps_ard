@@ -12,7 +12,7 @@
 #define MIN_ZOOM 45
 const long initZoom = 90;
 
-#define MAX_FOCUS 150
+#define MAX_FOCUS 150 
 #define MIN_FOCUS 30
 const long initFocus = 80;
 
@@ -101,9 +101,14 @@ void loop() {
     posFocus2 = pos[5]; // Decrease Focus
     toggleReset = pos[6]; // F button
     toggleMode = pos[7]; // E button
-    
-    if (pos[8] != -1) {
-      // if we are getting junk data go back to top and read again till we get good data
+
+    if(pos[8]!=-1) {
+      long d = 0;
+      while (1) {
+        if (radio.available())
+          radio.read(&d, sizeof(d));
+          if (d == -1) break;
+      }
       return;
     }
 
@@ -123,14 +128,14 @@ void loop() {
 
 
     // Debug Current Pos Values
-    Serial.print("Current Pos Values are: P=");
-    Serial.print(curPosPan);
-    Serial.print(",T=");
-    Serial.print(curPosTilt);
-    Serial.print(",F=");
-    Serial.print(curPosFocus);
-    Serial.print(",Z=");
-    Serial.println(curPosZoom);
+            Serial.print("Current Pos Values are: P=");
+            Serial.print(curPosPan);
+            Serial.print(",T=");
+            Serial.print(curPosTilt);
+            Serial.print(",F=");
+            Serial.print(curPosFocus);
+            Serial.print(",Z=");
+            Serial.println(curPosZoom);
 
 
     //     Debug Delay Values
@@ -237,9 +242,5 @@ void loop() {
 
   else {
     Serial.println("Fail");
-    PanServo.write(curPosPan);
-    TiltServo.write(curPosTilt);
-    ZoomServo.write(curPosZoom);
-    FocusServo.write(curPosFocus);
   }
 }
