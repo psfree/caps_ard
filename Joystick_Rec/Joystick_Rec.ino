@@ -9,25 +9,25 @@
 #define FOCUS_PIN 5
 
 #define MAX_ZOOM 145
-#define MIN_ZOOM 45
-const long initZoom = 90;
+#define MIN_ZOOM 30
+const int initZoom = 90;
 
 #define MAX_FOCUS 150
 #define MIN_FOCUS 30
-const long initFocus = 80;
+const int initFocus = 90;
 
 #define MAX_PAN 180
 #define MIN_PAN 0
 #define MAX_P_ANAL 535
 #define MIN_P_ANAL 465
-const long initPan = 80;
+const int initPan = 80;
 
 
 #define MAX_TILT 180
 #define MIN_TILT 30
 #define MAX_T_ANAL 535
 #define MIN_T_ANAL 465
-const long initTilt = 65;
+const int initTilt = 65;
 
 // For Fuzzy Controls
 #define MAX_DELAY  80
@@ -51,17 +51,17 @@ const byte address[6] = "00001";
 
 // Position Array
 #define POS_SIZE 9
-long pos[POS_SIZE];
-long posPan;
-long curPosPan = initPan;
-long posTilt;
-long curPosTilt = initTilt;
-long posZoom;
-long posZoom2;
-long curPosZoom = initZoom;
-long posFocus;
-long posFocus2;
-long curPosFocus = initFocus;
+int pos[POS_SIZE];
+int posPan;
+int curPosPan = initPan;
+int posTilt;
+int curPosTilt = initTilt;
+int posZoom;
+int posZoom2;
+int curPosZoom = initZoom;
+int posFocus;
+int posFocus2;
+int curPosFocus = initFocus;
 bool toggleReset;
 bool toggleMode;
 
@@ -103,6 +103,7 @@ void loop() {
     toggleMode = pos[7]; // E button
     
     if (pos[8] != -1) {
+      Serial.println("Here");
       // if we are getting junk data go back to top and read again till we get good data
       return;
     }
