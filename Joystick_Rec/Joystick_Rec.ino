@@ -9,25 +9,25 @@
 #define FOCUS_PIN 5
 
 #define MAX_ZOOM 145
-#define MIN_ZOOM 45
-const long initZoom = 90;
+#define MIN_ZOOM 30
+const int initZoom = 90;
 
 #define MAX_FOCUS 150
 #define MIN_FOCUS 30
-const long initFocus = 80;
+const int initFocus = 90;
 
 #define MAX_PAN 180
 #define MIN_PAN 0
 #define MAX_P_ANAL 535
 #define MIN_P_ANAL 465
-const long initPan = 80;
+const int initPan = 90;
 
 
 #define MAX_TILT 180
 #define MIN_TILT 30
 #define MAX_T_ANAL 535
 #define MIN_T_ANAL 465
-const long initTilt = 65;
+const int initTilt = 65;
 
 // For Fuzzy Controls
 #define MAX_DELAY  80
@@ -103,6 +103,7 @@ void loop() {
     toggleMode = pos[7]; // E button
 
     if (pos[8] != -1) {
+      Serial.println("Here");
       return;
     }
 
