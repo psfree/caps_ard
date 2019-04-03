@@ -162,6 +162,9 @@ void loop() {
     else {
       y_pos = 512;
     }
+    for(int i=0; i<SIZE_POS; i++) {
+      pos[i] = 1;
+    }
     pos[1] = x_pos;
     pos[0] = y_pos;
     pos[SIZE_POS-1] = -1;
