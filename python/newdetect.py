@@ -237,7 +237,7 @@ def main():
             print('Please choose a number from the list')
     portchoice = str(ports[j].device)
     
-    # ser1 = serial.Serial(portchoice, 9600) #set the correct port
+    ser1 = serial.Serial(portchoice, 9600) #set the correct port
     
     # open the image capture device
     
@@ -323,7 +323,7 @@ def main():
             s2 = b'l'
     	
         s = struct.pack("<ccfc", s1,s2,control, b'\n')
-        #ser1.write(s)
+        ser1.write(s)
         cv2.imshow('frame', frame)
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
