@@ -55,7 +55,7 @@ upperbodyCascade = cv2.CascadeClassifier('upperbody.xml')
 
 
 #open the image capture device
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(1)
 
 #create  a PID controller for use with zoom and focus
 pid = PID(1, 0.1, 0.05, setpoint=1000) #tweak me. hopefully setpoint being high will not cause problems
@@ -75,18 +75,17 @@ while cap.isOpened():
         storetime = datetime.datetime.now()
         fps = framecount
         framecount =0
-    # frame =  cv2.blur(frame, (100,100))
+    #resize the frame to 720p. if resolution is too high, frame rate will suffer significantly
     frame = imutils.resize(frame, width=720)
+    
+    #get dimensions of the frame and create a grayscale copy
     height, width, channels = frame.shape
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     fm = variance(gray)
     
-    control = pid(fm)
-    #print(control)
-    
-    #control the motors for autofocus here
-    #send control output to the arduino
-    
+    control = pid(fm)    
+	
+	#display Blur and FPS text over video stream    
     text = 'Blur'
     cv2.putText(
         frame,
@@ -107,6 +106,9 @@ while cap.isOpened():
         (0, 0, 0xFF),
         3,
         )
+        
+    #instantiate 4 haar cascades, one for faces, 2 for each side of the face (profiles)
+    #and one for upper bodies
     faces = faceCascade.detectMultiScale(gray, scaleFactor=1.1,
             minNeighbors=10, minSize=(60, 60),
             flags=cv2.CASCADE_SCALE_IMAGE)
@@ -123,6 +125,7 @@ while cap.isOpened():
             minNeighbors=5, minSize=(200, 200),
             flags=cv2.CASCADE_SCALE_IMAGE)
 
+	#draw rectangles for each detected feature
     for (x, y, w, h) in faces:
         cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 0xFF, 0), 2)
     for (x, y, w, h) in profiles:
@@ -132,6 +135,7 @@ while cap.isOpened():
     for (x, y, w, h) in bodies:
         cv2.rectangle(frame, (x, y), (x + w, y + h), (0xFF, 0, 0), 2)
 
+	#this part ensures that features are used by priority, faces > profiles >flipped profiles> upper bodies
     sections = []
     if len(faces)==0:
     	faces = profiles
@@ -142,12 +146,19 @@ while cap.isOpened():
     			bodies=[]
     		fprofiles=[]
     	profiles = []
+    
+    #calculate the centroid of the first detected feature
+    #ignores other features to avoid oscillating between them
+    #i.e. two faces onscreen, only one will be prioritized
     cx = width/2
     cy = height/2
     for (x,y,w,h) in faces:
     	cx = x + w/2
     	cy= y+h/2
     	break
+    	
+    #format the data to be sent to the arduino
+    # values: c=center, u=up, d=down; l=left, r=right
     fudge=30
     s1 = b'c'
     s2 = b'c'
@@ -162,8 +173,12 @@ while cap.isOpened():
         s2 = b'r'
 	
     print(str(s1))
+    #create a packed struct and send it via serial interface to the arduino
+    #format is char, char, float, and terminating char which must always be '\n'
+    #this is used to detect if the serial packet is properly aligned
     s = struct.pack("<ccfc", s1,s2,control, b'\n')
     ser1.write(s)
+    #display the modified frame
     cv2.imshow('frame', frame)
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
